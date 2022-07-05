@@ -1,5 +1,5 @@
 function getFileCoverage(reports, files) {
-  const packages = reports.map((report) => report["group"]).map((report) => report["package"]);
+  const packages = reports.flatMap((report) => report["group"].map((group) => group["package"]));
   return getFileCoverageFromPackages([].concat(...packages), files);
 }
 
