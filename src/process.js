@@ -7,27 +7,30 @@ function getFileCoverageFromPackages(packages, files) {
   const result = {};
   const resultFiles = [];
   packages.forEach((item) => {
-    const packageName = item["$"].name;
-    const sourceFiles = item.sourcefile;
-    sourceFiles.forEach((sourceFile) => {
-      const sourceFileName = sourceFile["$"].name;
-      var file = files.find(function (f) {
-        return f.filePath.endsWith(`${packageName}/${sourceFileName}`);
-      });
-      if (file != null) {
-        const fileName = sourceFile["$"].name;
-        const counters = sourceFile["counter"];
-        if (counters != null && counters.length != 0) {
-          const coverage = getDetailedCoverage(counters, "INSTRUCTION");
-          file["name"] = fileName;
-          file["missed"] = coverage.missed;
-          file["covered"] = coverage.covered;
-          file["percentage"] = coverage.percentage;
-          resultFiles.push(file);
+    try {
+      const packageName = item["$"].name;
+      const sourceFiles = item.sourcefile;
+      sourceFiles.forEach((sourceFile) => {
+        const sourceFileName = sourceFile["$"].name;
+        var file = files.find(function (f) {
+          return f.filePath.endsWith(`${packageName}/${sourceFileName}`);
+        });
+        if (file != null) {
+          const fileName = sourceFile["$"].name;
+          const counters = sourceFile["counter"];
+          if (counters != null && counters.length != 0) {
+            const coverage = getDetailedCoverage(counters, "INSTRUCTION");
+            file["name"] = fileName;
+            file["missed"] = coverage.missed;
+            file["covered"] = coverage.covered;
+            file["percentage"] = coverage.percentage;
+            resultFiles.push(file);
+          }
         }
-      }
-    });
-    resultFiles.sort((a, b) => b.percentage - a.percentage);
+      });
+      resultFiles.sort((a, b) => b.percentage - a.percentage);
+    } 
+    catch(err) {}
   });
   result.files = resultFiles;
   if (resultFiles.length != 0) {
